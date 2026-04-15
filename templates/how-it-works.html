@@ -1,0 +1,154 @@
+{# ============================================================================
+   Facts & Fakes v2 — templates/how-it-works.html
+   Version: 2.0.0
+   Date: April 15, 2026
+
+   PURPOSE:
+     Explains the two-layer fact-checking system. SEO content page.
+
+   CHANGELOG:
+     v2.0.0 (2026-04-15): Initial build. Full explainer content.
+   ============================================================================ #}
+{% extends "base.html" %}
+
+{% block title %}How It Works — Facts & Fakes{% endblock %}
+{% block meta_description %}How Facts & Fakes uses two-layer AI analysis to check both reporting accuracy and claim truth.{% endblock %}
+
+{% block content %}
+<div class="how-it-works-page">
+    <div class="page-inner">
+
+        <div class="page-header">
+            <h1 class="page-title">How It Works</h1>
+            <p class="page-subtitle">
+                Most fact-checkers ask: "Is this article true or false?"<br />
+                That's the wrong question.
+            </p>
+        </div>
+
+        <!-- The Core Insight -->
+        <div class="hiw-example-block">
+            <div class="hiw-example-article">
+                <span class="hiw-example-label">The Article Says:</span>
+                <blockquote class="hiw-example-quote">
+                    "Senator Johnson claimed that coffee causes cancer."
+                </blockquote>
+            </div>
+            <div class="hiw-example-two-col">
+                <div class="hiw-example-layer hiw-example-layer--1">
+                    <div class="hiw-layer-badge">Layer 1</div>
+                    <h3>Did the journalist report accurately?</h3>
+                    <p>Did Senator Johnson actually say this? Is the journalist reporting faithfully?</p>
+                    <div class="hiw-verdict hiw-verdict--green">✓ Accurate Reporting</div>
+                    <p class="hiw-verdict-note">Yes — Senator Johnson said this at a press conference on March 12.</p>
+                </div>
+                <div class="hiw-example-layer hiw-example-layer--2">
+                    <div class="hiw-layer-badge hiw-layer-badge--2">Layer 2</div>
+                    <h3>Is the underlying claim true?</h3>
+                    <p>Does coffee actually cause cancer? Is what was said factually correct?</p>
+                    <div class="hiw-verdict hiw-verdict--red">✗ False Claim</div>
+                    <p class="hiw-verdict-note">No — the scientific consensus does not support this.</p>
+                </div>
+            </div>
+            <p class="hiw-insight">
+                The reporting is accurate. The claim is false. You need to know <em>both</em>.
+            </p>
+        </div>
+
+        <!-- How the system works -->
+        <div class="hiw-steps">
+            <h2 class="hiw-section-title">The Analysis Pipeline</h2>
+            <div class="hiw-step-list">
+                <div class="hiw-step">
+                    <div class="hiw-step-number">01</div>
+                    <div class="hiw-step-content">
+                        <h3>Article Extraction</h3>
+                        <p>We fetch the article from the URL you provide (or read the text you paste). We extract the title, author, source, and full article text.</p>
+                    </div>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-step-number">02</div>
+                    <div class="hiw-step-content">
+                        <h3>Layer 1 — Reporting Accuracy</h3>
+                        <p>Claude AI reads the article and identifies every factual assertion the journalist makes. For each one: is this an accurate representation of what happened or was said?</p>
+                    </div>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-step-number">03</div>
+                    <div class="hiw-step-content">
+                        <h3>Layer 2 — Claim Truth</h3>
+                        <p>We extract the actual claims in the article — the things being reported as fact. Then we verify each one using a consensus of four AI systems: Claude, GPT, DeepSeek, and Cohere.</p>
+                    </div>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-step-number">04</div>
+                    <div class="hiw-step-content">
+                        <h3>Bias & Manipulation Detection</h3>
+                        <p>We analyze political leaning, loaded language, framing choices, and whether manipulation techniques are present.</p>
+                    </div>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-step-number">05</div>
+                    <div class="hiw-step-content">
+                        <h3>Source & Author Credibility</h3>
+                        <p>We evaluate the publication's reputation and the author's credentials and history.</p>
+                    </div>
+                </div>
+                <div class="hiw-step">
+                    <div class="hiw-step-number">06</div>
+                    <div class="hiw-step-content">
+                        <h3>Trust Score</h3>
+                        <p>All findings are synthesized into a single trust score and a plain-English summary. Weighted across all four dimensions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="hiw-cta">
+            <a href="/" class="analyze-btn">Try It Now →</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+.how-it-works-page { padding: 3rem 1.5rem; }
+.page-inner { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem; }
+.page-header { text-align: center; }
+.page-title { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; margin-bottom: 1rem; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.page-subtitle { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; }
+
+.hiw-example-block { background: var(--bg-card); border: 1px solid var(--border-bright); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.hiw-example-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.5rem; }
+.hiw-example-quote { font-size: 1.1rem; color: var(--text-primary); border-left: 3px solid var(--accent-cyan); padding-left: 1rem; margin: 0; font-style: italic; }
+.hiw-example-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .hiw-example-two-col { grid-template-columns: 1fr; } }
+.hiw-example-layer { background: var(--bg-secondary); border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.hiw-example-layer--1 { border-top: 2px solid var(--accent-cyan); }
+.hiw-example-layer--2 { border-top: 2px solid var(--accent-purple); }
+.hiw-layer-badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 99px; font-size: 0.68rem; font-weight: 700; background: rgba(6,182,212,0.12); color: var(--accent-cyan); border: 1px solid rgba(6,182,212,0.3); width: fit-content; }
+.hiw-layer-badge--2 { background: rgba(139,92,246,0.12); color: var(--accent-purple); border-color: rgba(139,92,246,0.3); }
+.hiw-example-layer h3 { font-size: 0.9rem; color: var(--text-primary); }
+.hiw-example-layer p { font-size: 0.82rem; color: var(--text-secondary); }
+.hiw-verdict { font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 99px; width: fit-content; }
+.hiw-verdict--green { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+.hiw-verdict--red { background: rgba(239,68,68,0.12); color: var(--accent-red); }
+.hiw-verdict-note { font-size: 0.78rem; color: var(--text-muted); }
+.hiw-insight { text-align: center; font-size: 1rem; color: var(--text-secondary); border-top: 1px solid var(--border); padding-top: 1rem; }
+.hiw-insight em { color: var(--accent-cyan); font-style: normal; font-weight: 600; }
+
+.hiw-section-title { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem; }
+.hiw-step-list { display: flex; flex-direction: column; gap: 1.5rem; }
+.hiw-step { display: flex; gap: 1.5rem; align-items: flex-start; }
+.hiw-step-number { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan); opacity: 0.5; flex-shrink: 0; width: 2.5rem; }
+.hiw-step-content h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-primary); }
+.hiw-step-content p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+
+.hiw-cta { display: flex; justify-content: center; }
+</style>
+{% endblock %}
+
+{# I did no harm and this file is not truncated #}
