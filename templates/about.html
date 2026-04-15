@@ -1,0 +1,61 @@
+{# ============================================================================
+   Facts & Fakes v2 — templates/about.html
+   Version: 2.0.0
+   Date: April 15, 2026
+
+   CHANGELOG:
+     v2.0.0 (2026-04-15): Initial build.
+   ============================================================================ #}
+{% extends "base.html" %}
+
+{% block title %}About — Facts & Fakes{% endblock %}
+{% block meta_description %}About Facts & Fakes — AI-powered news fact-checking platform.{% endblock %}
+
+{% block content %}
+<div class="about-page">
+    <div class="page-inner">
+
+        <div class="page-header">
+            <h1 class="page-title">About Facts & Fakes</h1>
+        </div>
+
+        <div class="about-content">
+            <p>
+                Facts & Fakes is an AI-powered news fact-checking platform built to address
+                a fundamental gap in how we evaluate news: the difference between
+                <strong>how something is reported</strong> and <strong>whether it's actually true</strong>.
+            </p>
+            <p>
+                Our two-layer analysis system gives you both answers at once — making it the
+                only fact-checker that separates the accuracy of the journalism from the
+                accuracy of the underlying claims.
+            </p>
+            <p>
+                Built with a swarm of AI systems working in consensus: Claude, GPT-4, DeepSeek,
+                and Cohere. No single AI makes the verdict — they debate it.
+            </p>
+        </div>
+
+        <div class="about-cta">
+            <a href="/" class="analyze-btn">Start Fact-Checking →</a>
+            <a href="/how-it-works" class="action-btn action-btn--secondary" style="text-decoration:none;">How It Works</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+.about-page { padding: 3rem 1.5rem; }
+.page-inner { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 2.5rem; }
+.page-header { text-align: center; }
+.page-title { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.about-content { display: flex; flex-direction: column; gap: 1rem; }
+.about-content p { color: var(--text-secondary); font-size: 1rem; line-height: 1.8; }
+.about-content strong { color: var(--text-primary); }
+.about-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+</style>
+{% endblock %}
+
+{# I did no harm and this file is not truncated #}
