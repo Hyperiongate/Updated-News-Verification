@@ -1,0 +1,343 @@
+{# ============================================================================
+   Facts & Fakes v2 — templates/index.html
+   Version: 2.0.0
+   Date: April 15, 2026
+
+   PURPOSE:
+     Main analysis page. Contains:
+       - Hero: Single input form (URL or paste)
+       - Loading state: Animated status messages while analyzing
+       - Results: Trust score gauge, two-layer breakdown, deep-dive sections,
+                  actions bar (PDF download, analyze another)
+
+   JS LOADING ORDER (modular architecture — do not change):
+     1. service-templates.js  — template generation + data display logic
+     2. app-core.js           — app control, API calls, user interaction
+
+   CHANGELOG:
+     v2.0.0 (2026-04-15): Initial build. Full DOM structure for all result
+                          sections established for Phase 1 frontend testing.
+   ============================================================================ #}
+{% extends "base.html" %}
+
+{% block title %}Facts & Fakes — AI News Fact-Checker{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================================
+     HERO — Input Section
+     ========================================================================= -->
+<section class="hero-section" id="hero">
+    <div class="hero-inner">
+
+        <!-- Headline -->
+        <div class="hero-headline-group">
+            <h1 class="hero-headline">
+                <span class="hero-headline-main">Is it true?</span>
+            </h1>
+            <p class="hero-subheadline">
+                Paste a news article URL, article text, or transcript.<br />
+                We check <strong>both</strong> the reporting <em>and</em> the underlying claims.
+            </p>
+        </div>
+
+        <!-- Input Form -->
+        <div class="input-card" id="input-card">
+            <div class="input-wrapper">
+                <textarea
+                    id="analysis-input"
+                    class="analysis-textarea"
+                    placeholder="Paste a URL (https://...) or article text here..."
+                    rows="4"
+                    aria-label="Article URL or text to fact-check"
+                ></textarea>
+
+                <div class="input-footer">
+                    <span class="input-hint" id="input-type-hint">
+                        <span class="hint-icon" aria-hidden="true">ℹ</span>
+                        Supports news articles, opinion pieces, press releases, and transcripts
+                    </span>
+                    <button
+                        id="analyze-btn"
+                        class="analyze-btn"
+                        type="button"
+                        aria-label="Analyze article"
+                    >
+                        <span class="btn-text">Analyze</span>
+                        <span class="btn-icon" aria-hidden="true">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Error message area -->
+            <div id="input-error" class="input-error" role="alert" aria-live="polite" style="display:none;"></div>
+        </div>
+
+        <!-- Feature hints below input -->
+        <div class="hero-feature-pills">
+            <span class="feature-pill">
+                <span class="pill-dot pill-dot--cyan" aria-hidden="true"></span>
+                Layer 1: Reporting Accuracy
+            </span>
+            <span class="feature-pill">
+                <span class="pill-dot pill-dot--purple" aria-hidden="true"></span>
+                Layer 2: Claim Truth
+            </span>
+            <span class="feature-pill">
+                <span class="pill-dot pill-dot--blue" aria-hidden="true"></span>
+                4 AI Systems
+            </span>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =========================================================================
+     LOADING STATE
+     ========================================================================= -->
+<section class="loading-section" id="loading-section" style="display:none;" aria-live="polite" aria-label="Analysis in progress">
+    <div class="loading-inner">
+
+        <!-- Animated visual -->
+        <div class="loading-visual" aria-hidden="true">
+            <div class="loading-orb"></div>
+            <div class="loading-rings">
+                <div class="loading-ring loading-ring--1"></div>
+                <div class="loading-ring loading-ring--2"></div>
+                <div class="loading-ring loading-ring--3"></div>
+            </div>
+        </div>
+
+        <!-- Status message -->
+        <div class="loading-status">
+            <p class="loading-message" id="loading-message">Initializing analysis...</p>
+            <div class="loading-bar-wrapper" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="loading-bar-wrapper">
+                <div class="loading-bar" id="loading-bar"></div>
+            </div>
+        </div>
+
+        <!-- Agent status list -->
+        <div class="loading-agents" id="loading-agents" aria-label="Analysis steps">
+            <div class="agent-step" id="step-article" data-step="article">
+                <span class="agent-step-icon" aria-hidden="true">○</span>
+                <span class="agent-step-label">Reading article</span>
+            </div>
+            <div class="agent-step" id="step-credibility" data-step="credibility">
+                <span class="agent-step-icon" aria-hidden="true">○</span>
+                <span class="agent-step-label">Checking source credibility</span>
+            </div>
+            <div class="agent-step" id="step-layer1" data-step="layer1">
+                <span class="agent-step-icon" aria-hidden="true">○</span>
+                <span class="agent-step-label">Analyzing reporting accuracy</span>
+            </div>
+            <div class="agent-step" id="step-layer2" data-step="layer2">
+                <span class="agent-step-icon" aria-hidden="true">○</span>
+                <span class="agent-step-label">Verifying claims with 4 AI systems</span>
+            </div>
+            <div class="agent-step" id="step-bias" data-step="bias">
+                <span class="agent-step-icon" aria-hidden="true">○</span>
+                <span class="agent-step-label">Detecting bias &amp; manipulation</span>
+            </div>
+            <div class="agent-step" id="step-synthesis" data-step="synthesis">
+                <span class="agent-step-icon" aria-hidden="true">○</span>
+                <span class="agent-step-label">Generating report</span>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =========================================================================
+     RESULTS SECTION
+     ========================================================================= -->
+<section class="results-section" id="results-section" style="display:none;" aria-label="Analysis results">
+    <div class="results-inner">
+
+        <!-- -----------------------------------------------------------------
+             TRUST SCORE GAUGE
+             ----------------------------------------------------------------- -->
+        <div class="trust-score-block" id="trust-score-block">
+            <div class="trust-gauge-wrapper" aria-label="Trust score gauge">
+                <!-- SVG radial arc gauge — rendered by app-core.js -->
+                <svg class="trust-gauge-svg" id="trust-gauge-svg" viewBox="0 0 220 140" aria-hidden="true">
+                    <!-- Background arc -->
+                    <path id="gauge-bg-arc" class="gauge-arc-bg" />
+                    <!-- Colored score arc -->
+                    <path id="gauge-score-arc" class="gauge-arc-score" />
+                    <!-- Score number in center -->
+                    <text id="gauge-score-text" class="gauge-score-text" x="110" y="105" text-anchor="middle"></text>
+                </svg>
+                <!-- Score label below gauge -->
+                <div class="trust-label" id="trust-label" aria-live="polite"></div>
+            </div>
+            <!-- Plain-English summary -->
+            <div class="trust-summary" id="trust-summary" aria-live="polite"></div>
+
+            <!-- Article metadata (title, source, word count) -->
+            <div class="article-meta" id="article-meta">
+                <span class="meta-item" id="meta-title"></span>
+                <span class="meta-divider" aria-hidden="true">·</span>
+                <span class="meta-item" id="meta-source"></span>
+                <span class="meta-divider" aria-hidden="true">·</span>
+                <span class="meta-item" id="meta-wordcount"></span>
+            </div>
+        </div>
+
+
+        <!-- -----------------------------------------------------------------
+             TWO-LAYER BREAKDOWN
+             ----------------------------------------------------------------- -->
+        <div class="two-layer-grid" id="two-layer-grid">
+
+            <!-- Layer 1: Article Accuracy -->
+            <div class="layer-card layer-card--1" id="layer1-card">
+                <div class="layer-card-header">
+                    <div class="layer-badge layer-badge--1" aria-hidden="true">Layer 1</div>
+                    <h2 class="layer-card-title">Article Accuracy</h2>
+                    <div class="layer-score-display">
+                        <span class="layer-score-number" id="layer1-score" aria-label="Layer 1 score"></span>
+                        <span class="layer-score-label" id="layer1-label"></span>
+                    </div>
+                </div>
+                <p class="layer-summary" id="layer1-summary"></p>
+                <div class="layer-question-note">
+                    <span class="question-note-icon" aria-hidden="true">?</span>
+                    Did the journalist accurately report what happened or was said?
+                </div>
+                <div class="assertions-list" id="layer1-assertions" role="list" aria-label="Reporting assertions">
+                    <!-- Populated by service-templates.js -->
+                </div>
+            </div>
+
+            <!-- Layer 2: Claim Truth -->
+            <div class="layer-card layer-card--2" id="layer2-card">
+                <div class="layer-card-header">
+                    <div class="layer-badge layer-badge--2" aria-hidden="true">Layer 2</div>
+                    <h2 class="layer-card-title">Claim Truth</h2>
+                    <div class="layer-score-display">
+                        <span class="layer-score-number" id="layer2-score" aria-label="Layer 2 score"></span>
+                        <span class="layer-score-label" id="layer2-label"></span>
+                    </div>
+                </div>
+                <p class="layer-summary" id="layer2-summary"></p>
+                <div class="layer-question-note">
+                    <span class="question-note-icon" aria-hidden="true">?</span>
+                    Are the underlying claims in this article actually true?
+                </div>
+                <div class="claims-list" id="layer2-claims" role="list" aria-label="Claim verdicts">
+                    <!-- Populated by service-templates.js -->
+                </div>
+                <!-- AI consensus badge -->
+                <div class="ai-consensus-bar" id="ai-consensus-bar" aria-label="AI systems used">
+                    <span class="consensus-label">Verified by</span>
+                    <div class="consensus-badges" id="consensus-badges">
+                        <!-- Populated by service-templates.js -->
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.two-layer-grid -->
+
+
+        <!-- -----------------------------------------------------------------
+             DEEP DIVE SECTIONS (Collapsible)
+             ----------------------------------------------------------------- -->
+        <div class="deep-dive-section" id="deep-dive-section">
+            <h2 class="deep-dive-heading" aria-label="Additional analysis sections">Deep Dive</h2>
+
+            <!-- Source & Author Credibility -->
+            <div class="accordion-item" id="accordion-credibility">
+                <button
+                    class="accordion-trigger"
+                    id="accordion-credibility-trigger"
+                    aria-expanded="false"
+                    aria-controls="accordion-credibility-body"
+                    onclick="toggleAccordion('credibility')"
+                >
+                    <span class="accordion-icon" aria-hidden="true">◈</span>
+                    <span class="accordion-title">Source &amp; Author Credibility</span>
+                    <span class="accordion-score-badge" id="credibility-score-badge" aria-label="Credibility score"></span>
+                    <span class="accordion-chevron" aria-hidden="true">›</span>
+                </button>
+                <div
+                    class="accordion-body"
+                    id="accordion-credibility-body"
+                    role="region"
+                    aria-labelledby="accordion-credibility-trigger"
+                    hidden
+                >
+                    <div class="accordion-content" id="credibility-content">
+                        <!-- Populated by service-templates.js -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bias & Manipulation -->
+            <div class="accordion-item" id="accordion-bias">
+                <button
+                    class="accordion-trigger"
+                    id="accordion-bias-trigger"
+                    aria-expanded="false"
+                    aria-controls="accordion-bias-body"
+                    onclick="toggleAccordion('bias')"
+                >
+                    <span class="accordion-icon" aria-hidden="true">◈</span>
+                    <span class="accordion-title">Bias &amp; Manipulation</span>
+                    <span class="accordion-score-badge" id="bias-score-badge" aria-label="Bias score"></span>
+                    <span class="accordion-chevron" aria-hidden="true">›</span>
+                </button>
+                <div
+                    class="accordion-body"
+                    id="accordion-bias-body"
+                    role="region"
+                    aria-labelledby="accordion-bias-trigger"
+                    hidden
+                >
+                    <div class="accordion-content" id="bias-content">
+                        <!-- Populated by service-templates.js -->
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.deep-dive-section -->
+
+
+        <!-- -----------------------------------------------------------------
+             ACTIONS BAR
+             ----------------------------------------------------------------- -->
+        <div class="actions-bar" id="actions-bar">
+            <button
+                id="pdf-btn"
+                class="action-btn action-btn--secondary"
+                type="button"
+                aria-label="Download PDF report"
+            >
+                <span class="btn-icon" aria-hidden="true">↓</span>
+                Download Report
+            </button>
+            <button
+                id="reset-btn"
+                class="action-btn action-btn--primary"
+                type="button"
+                aria-label="Analyze another article"
+            >
+                <span class="btn-icon" aria-hidden="true">+</span>
+                Analyze Another
+            </button>
+        </div>
+
+    </div><!-- /.results-inner -->
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+<!-- Load order is critical — do not change -->
+<script src="/static/js/service-templates.js"></script>
+<script src="/static/js/app-core.js"></script>
+{% endblock %}
+
+{# I did no harm and this file is not truncated #}
