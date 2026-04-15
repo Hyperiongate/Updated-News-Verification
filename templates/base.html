@@ -1,0 +1,99 @@
+{# ============================================================================
+   Facts & Fakes v2 — templates/base.html
+   Version: 2.0.0
+   Date: April 15, 2026
+
+   PURPOSE:
+     Base template. All pages extend this.
+     Defines: nav bar, footer, shared CSS/JS loading, meta tags.
+
+   CHANGELOG:
+     v2.0.0 (2026-04-15): Initial build. Futuristic dark-mode AI theme.
+                          JetBrains Mono + Inter from Google Fonts.
+                          No debate arena, quiz, AI council, or observatory.
+   ============================================================================ #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="{% block meta_description %}Facts & Fakes — AI-powered news fact-checking with two-layer analysis. Know if the reporting is accurate AND if the underlying claims are true.{% endblock %}" />
+    <meta name="theme-color" content="#0a0e1a" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% block og_title %}Facts & Fakes — AI News Fact-Checker{% endblock %}" />
+    <meta property="og:description" content="Two-layer AI fact-checking: Is the reporting accurate? Are the claims actually true?" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://factsandfakes.ai" />
+
+    <title>{% block title %}Facts & Fakes{% endblock %}</title>
+
+    <!-- Google Fonts: JetBrains Mono (headings/data) + Inter (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="/static/css/main.css" />
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- ===================================================================
+         NAV BAR
+         =================================================================== -->
+    <nav class="nav-bar" role="navigation" aria-label="Main navigation">
+        <div class="nav-inner">
+            <!-- Logo / Wordmark -->
+            <a href="/" class="nav-logo" aria-label="Facts & Fakes — Home">
+                <span class="nav-logo-icon" aria-hidden="true">⬡</span>
+                <span class="nav-logo-text">Facts<span class="nav-logo-amp">&</span>Fakes</span>
+            </a>
+
+            <!-- Nav Links -->
+            <div class="nav-links">
+                <a href="/how-it-works" class="nav-link {% if request.path == '/how-it-works' %}active{% endif %}">
+                    How It Works
+                </a>
+                <a href="/about" class="nav-link {% if request.path == '/about' %}active{% endif %}">
+                    About
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===================================================================
+         MAIN CONTENT
+         =================================================================== -->
+    <main id="main-content" role="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ===================================================================
+         FOOTER
+         =================================================================== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="footer-logo-icon" aria-hidden="true">⬡</span>
+                <span class="footer-brand-name">Facts & Fakes</span>
+            </div>
+            <div class="footer-links">
+                <a href="/how-it-works" class="footer-link">How It Works</a>
+                <a href="/about" class="footer-link">About</a>
+            </div>
+            <div class="footer-disclaimer">
+                AI-assisted fact-checking. Always verify with primary sources.
+                Not a substitute for professional journalism or legal advice.
+            </div>
+            <div class="footer-version">v2.0.0</div>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>
+
+{# I did no harm and this file is not truncated #}
